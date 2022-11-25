@@ -30,6 +30,18 @@ WITH a
 RETURN a
 ```
 
+Alternative query
+```sh
+CALL apoc.periodic.iterate('
+    CALL apoc.load.csv("file:///transfers.csv") YIELD map AS row RETURN row
+','
+    WITH row
+    UNWIND [row.from_address] + [row.to_address] AS address
+    WITH DISTINCT address
+    MERGE (a:Accoutn {address: address})
+', {batchSize:10000, iterateList:true, parallel:true})
+```
+
 - Create NFT nodes
 
 ```sh
@@ -56,6 +68,17 @@ WITH n
 RETURN n
 ```
 
+Alternative query
+```sh
+CALL apoc.periodic.iterate('
+    CALL apoc.load.csv("file:///transfers.csv") YIELD map AS row RETURN row
+','
+    WITH row.nft_address AS address, row.token_id AS token
+    WITH DISTINCT address AS address, token AS token
+    MERGE (n:NFT {address: address, token: token})
+', {batchSize:10000, iterateList:true, parallel:true})
+```
+
 - Create transaction nodes
 
 ```sh
@@ -78,6 +101,17 @@ CALL {
 IN TRANSACTIONS OF 1000 ROWS
 WITH t
 RETURN t
+```
+
+Alternative query
+```sh
+CALL apoc.periodic.iterate('
+    CALL apoc.load.csv("file:///transfers.csv") YIELD map AS row RETURN row
+','
+    WITH row
+    MERGE (t:Transaction {id: row.event_id, hash: row.transaction_hash, value:row.transaction_value, timestamp: row.timestamp})
+    RETURN t
+', {batchSize:10000, iterateList:true, parallel:true})
 ```
 
 - Create transaction graph
