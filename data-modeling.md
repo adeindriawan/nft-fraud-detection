@@ -2,6 +2,7 @@
 
 - Export historical transaction data into a single CSV file
 - Create account nodes after removing duplicate addresses
+- Configure APOC if using the library: https://community.neo4j.com/t5/neo4j-graph-platform/setting-apoc-import-file-enabled-true-in-your-neo4j-conf/m-p/46405
 
 ```sh
 //Create account node
